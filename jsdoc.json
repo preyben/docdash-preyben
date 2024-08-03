@@ -1,0 +1,44 @@
+{
+  "source": {
+    "//": "包含的路径",
+    "include": [
+      "src/components"
+    ],
+    "includePattern": ".(js|vue)$"
+  },
+  "plugins": [
+    "plugins/commentsOnly"
+  ],
+  "templates": {
+    "title": "文档名称",
+    "disableSort": false,
+    "collapse": false,
+    "//": "如果组件没包含Vue则需要自己引入, vue2使用2.*版本的",
+    "vue": "https://cdn.bootcdn.net/ajax/libs/vue/3.3.4/vue.global.prod.js",
+    "//": "依赖的文件地址主要包含vue和其他三方依赖, lib.js需要更改为自己组件库打包后的文件. vue-cli一般是myLib.umd.js",
+    "libs": [
+      "myLib.js",
+      "myLib.css"
+    ],
+    "//": "vite打包时指定的umd 全局名称，同时包括其他Vue依赖的全局名称, 都将被Vue.use(MyLib). vue2 不需要, 组件需在自身调用Vue.use",
+    "vueGlobal": [
+      "MyLib"
+    ]
+  },
+  "opts": {
+    "//": "模板目录地址",
+    "template": "./docdash-preyben",
+    "encoding": "utf8",
+    "destination": "./jsdoc/",
+    "recurse": true,
+    "private": true
+  },
+  "docdash": {
+    "search": true,
+    "navLevel": 3,
+    "collapse": false,
+    "verbose": true
+  },
+  "//": "页面本身引用依赖的cdn地址",
+  "baseCdn": "https://cdn.bootcdn.net"
+}

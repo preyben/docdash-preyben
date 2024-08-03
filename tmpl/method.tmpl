@@ -1,6 +1,7 @@
 <?js
 var data = obj;
 var self = this;
+var fileType = arguments[0].meta.filename.split('.').pop();
 ?>
 <?js if (data.kind !== 'module' && !data.hideconstructor) { ?>
     <?js if (data.kind === 'class' && data.classdesc) { ?>
@@ -17,7 +18,7 @@ var self = this;
       } else {
         print(name);
       }
-    ?><?js= (data.signature || '') ?></h4>
+    ?><?js= fileType === 'vue' ? '' : (data.signature || '') ?></h4>
 
     <?js if (data.summary) { ?>
     <p class="summary usertext"><?js= summary ?></p>
@@ -45,13 +46,56 @@ var self = this;
     <ul><li><?js= this.linkto(data['this'], data['this']) ?></li></ul>
 <?js } ?>
 
-<?js if (data.examples && examples.length) { ?>
-    <h5 class="h5-examples">Example<?js= examples.length > 1? 's':'' ?></h5>
+<?js if (data.examples && examples.length) {
+    examples.forEach((i, index) => {
+        i.fileType = fileType;
+        i.id = arguments[0].meta.shortpath.replace(/[\/\.]/g, '-') + '-' + i.caption;
+        i.scriptCode = '';
+        const next = examples[index + 1];
+        if (next) {
+            next.hidden = false;
+            if (next.caption === (i.caption + '-script')) {
+                i.scriptCode = next.code;
+                next.hidden = true;
+            }
+        }
+    })
+ ?>
+    <h5 class="h5-examples">案例</h5>
     <?js= this.partial('examples.tmpl', examples) ?>
+    <script>
+
+if (`<?js= fileType ?>` === 'vue') {
+    const examples = <?js= JSON.stringify(examples)  ?>;
+    examples.forEach((j, index) => {
+        if (!j.caption || j.hidden) {
+            return
+        }
+          
+        const c = !j.scriptCode ? () => ({}) : new Function(`return ` + j.scriptCode);
+        if (Vue.createApp) {
+            const app = Vue.createApp(c());
+            <?js if (env.conf.templates.vueGlobal) {
+                env.conf.templates.vueGlobal.forEach(i => {
+            ?>
+                app.use(<?js= i ?>);
+            <?js
+                })
+            } ?>
+            app.mount('#' + j.id);
+        } else {
+            const app = new Vue(c());
+            app.$mount('#' + j.id);
+        }
+   
+    });
+}
+</script>
 <?js } ?>
 
+
 <?js if (data.params && params.length) { ?>
-    <h5 class="h5-parameters">Parameters:</h5>
+    <h5 class="h5-parameters"><?js= fileType === 'js' ? '参数' : '属性' ?></h5>
     <?js= this.partial('params.tmpl', params) ?>
 <?js } ?>
 
@@ -70,9 +114,9 @@ var self = this;
 <?js } ?>
 
 <?js if (data.listens && listens.length) { ?>
-<h5 class="h5-listens">Listens to Events:</h5>
+<h5 class="h5-listens">事件</h5>
 <ul><?js listens.forEach(function(f) { ?>
-    <li><?js= self.linkto(f) ?></li>
+    <li><?js= self.linkto(f).replace(/^event:/, '') ?></li>
 <?js }); ?></ul>
 <?js } ?>
 
@@ -108,7 +152,7 @@ var self = this;
 } } ?>
 
 <?js if (data.returns && returns.length) { ?>
-<h5 class="h5-returns">Returns:</h5>
+<h5 class="h5-returns">返回值:</h5>
 <?js if (returns.length > 1) { ?><ul><?js
     returns.forEach(function(r) { ?>
         <li><?js= self.partial('returns.tmpl', r) ?></li>

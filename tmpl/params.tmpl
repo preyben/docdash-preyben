@@ -100,7 +100,7 @@
             <?js if (params.hasAttributes) {?>
                 <td class="attributes">
                 <?js if (param.optional) { ?>
-                    &lt;optional><br>
+                    &lt;可选><br>
                 <?js } ?>
 
                 <?js if (param.nullable) { ?>
@@ -121,7 +121,7 @@
                 </td>
             <?js } ?>
 
-            <td class="description last"><?js= param.description ?><?js if (param.subparams) { ?>
+            <td class="description last"><?js= param.description ? param.description.replace(/[\n\r]/g, '<br>') : param.description ?><?js if (param.subparams) { ?>
                 <h6>Properties</h6>
                 <?js= self.partial('params.tmpl', param.subparams) ?>
             <?js } ?></td>

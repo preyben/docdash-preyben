@@ -2,12 +2,20 @@
     var data = obj;
     var self = this;
 
-    data.forEach(function(example) {
+    data.forEach(function(example, index) {
+        if (example.caption && example.caption.includes('-script')) {
+            return
+        }
         if (example.caption) {
     ?>
-        <p class="code-caption"><?js= example.caption ?></p>
+        <p class="code-caption"><?js= `${index + 1}. ${example.caption}` ?></p>
+        <div id="<?js= example.id ?>" class="<?js= example.fileType === 'vue' ? 'vue-example' : '' ?>">
+        <?js= example.code ?>
+        </div>
     <?js } ?>
-    <pre class="prettyprint"><code><?js= self.htmlsafe(example.code) ?></code></pre>
+    <pre class="prettyprint"><code><?js=  self.htmlsafe(!example.scriptCode ? example.code : (
+        `<template>\n${example.code}\n</template>\n<script>\n export default ${example.scriptCode} \n</script>`
+    )) ?></code></pre>
 <?js
     });
 ?>
