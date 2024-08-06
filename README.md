@@ -2,7 +2,7 @@
 
 ## 1、需要安装jsdoc
 ## 2、package.json设置
-### vue3 + vite
+### vite
 {  
   "scripts": {  
     "docs": "jsdoc -c jsdoc.json --debug",  
@@ -11,7 +11,7 @@
   },  
 }  
 
-### vue2 + cli
+### vue-cli
 {  
   "scripts": {  
     "docs": "jsdoc -c jsdoc.json",  
