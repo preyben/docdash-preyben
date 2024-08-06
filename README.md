@@ -1,7 +1,7 @@
 ## 模板编写人 github/preyben
 
 ## 1、需要安装jsdoc
-## 2、package.json设置：
+## 2、package.json设置
 vue3 + vite:
 {
   "scripts": {
