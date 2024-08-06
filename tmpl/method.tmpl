@@ -73,6 +73,8 @@ if (`<?js= fileType ?>` === 'vue') {
         }
           
         const c = !j.scriptCode ? () => ({}) : new Function(`return ` + j.scriptCode);
+        let aimDom = document.getElementById('iframe-' + j.id);
+        aimDom = aimDom ? aimDom.contentWindow.document.body : ('#' + j.id)
         if (Vue.createApp) {
             const app = Vue.createApp(c());
             <?js if (env.conf.templates.vueGlobal) {
@@ -82,10 +84,10 @@ if (`<?js= fileType ?>` === 'vue') {
             <?js
                 })
             } ?>
-            app.mount('#' + j.id);
+            app.mount(aimDom);
         } else {
             const app = new Vue(c());
-            app.$mount('#' + j.id);
+            app.$mount(aimDom);
         }
    
     });

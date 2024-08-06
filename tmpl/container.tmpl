@@ -2,9 +2,11 @@
     var self = this;
     var isGlobalPage;
     var fileType = arguments[0].fileType;
+    docs = docs.filter((i, index) => {
+        return index === docs.findIndex(j => j.longname === i.longname);
+    })
     docs.forEach(function(doc, i) {
 ?>
-
 <?js
     // we only need to check this once
     if (typeof isGlobalPage === 'undefined') {

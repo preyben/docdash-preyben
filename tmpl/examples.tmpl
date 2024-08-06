@@ -1,6 +1,33 @@
 <?js
     var data = obj;
     var self = this;
+    var iframeCss = '';
+    if (env.conf.templates.libs) { 
+        let libs = env.conf.templates.libs;
+        libs.forEach(i => {
+            i =i.replace(/[^:]\/\//g, '/');
+            if (i.split('.').pop() === 'css') {
+                iframeCss += `<link type="text/css" rel="stylesheet" href="${i}">`
+            }
+        })
+    }
+   var scrollStyle = `
+   <style>
+   ::-webkit-scrollbar {
+    width: 4px;
+    height: 1px;
+  }
+  ::-webkit-scrollbar-thumb {
+  border-radius : 4px;
+  background-color: #c0c4cc;
+  }
+  ::-webkit-scrollbar-track {
+    background: #f2f3f5;
+    border-radius: 4px;
+  }
+  </style>
+  `;
+  var preStyle = '';
 
     data.forEach(function(example, index) {
         if (example.caption && example.caption.includes('-script')) {
@@ -8,12 +35,31 @@
         }
         if (example.caption) {
     ?>
-        <p class="code-caption"><?js= `${index + 1}. ${example.caption}` ?></p>
-        <div id="<?js= example.id ?>" class="<?js= example.fileType === 'vue' ? 'vue-example' : '' ?>">
-        <?js= example.code ?>
-        </div>
+        <p class="code-caption"><?js= `${index + 1}. ${example.caption.replace('-mobile', '')}` ?></p>
+        <?js
+            if (example.caption.includes('-mobile')) {
+                preStyle = 'display: inline-block;height: 600px; margin: 0;width: calc(100% - 550px); margin: 0 0 0 20px;padding: 0;overflow-y: auto;';
+        ?>
+            <iframe id="iframe-<?js= example.id ?>" style="width: 375px;height:600px;border: 1px solid rgba(227, 230, 237, .8);border-radius:8px;background-color:#f2f3f5;"></iframe>
+            <script>
+                var iframeDocument = document.getElementById('iframe-<?js= example.id ?>').contentWindow.document;
+                iframeDocument.open();
+                iframeDocument.write(`<?js= iframeCss ?>`);
+                iframeDocument.write(`<?js= scrollStyle ?>`);
+                iframeDocument.write(`<?js= example.code ?>`);
+                iframeDocument.close();
+            </script>
+        <?js
+            } else {
+        ?>
+            <div id="<?js= example.id ?>" class="<?js= example.fileType === 'vue' ? 'vue-example' : '' ?>">
+            <?js= example.code ?>
+            </div>
+        <?js
+            }
+        ?>
     <?js } ?>
-    <pre class="prettyprint"><code><?js=  self.htmlsafe(!example.scriptCode ? example.code : (
+    <pre class="prettyprint" style="<?js= preStyle ?>"><code style="<?js= preStyle ? 'height:100%;' : '' ?>"><?js=  self.htmlsafe(!example.scriptCode ? example.code : (
         `<template>\n${example.code}\n</template>\n<script>\n export default ${example.scriptCode} \n</script>`
     )) ?></code></pre>
 <?js
