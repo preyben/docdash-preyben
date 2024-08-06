@@ -1,4 +1,4 @@
-## 模板编写人 徐鸿远
+## 模板编写人 github/preyben
 
 ## 1、需要安装jsdoc
 ## 2、package.json设置：
